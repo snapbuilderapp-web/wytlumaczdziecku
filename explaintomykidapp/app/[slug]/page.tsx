@@ -17,7 +17,7 @@ function getSupabase() {
   )
 }
 
-export const revalidate = 86400 // 24h ISR
+export const revalidate = 3600 // 1h ISR (was 24h) to ensure hero images refresh across all pages
 
 interface PageProps {
   params: Promise<{ slug: string }>
