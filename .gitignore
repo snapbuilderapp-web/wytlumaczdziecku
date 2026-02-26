@@ -1,0 +1,20 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Environment files — NEVER commit secrets
+**/.env.local
+**/.env.*.local
+**/.env
+
+# Next.js
+explaintomykidapp/.next/
+explaintomykidapp/out/
+explaintomykidapp/node_modules/
+
+# Vercel
+**/.vercel
+
+# Build artifacts
+*.tsbuildinfo

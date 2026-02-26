@@ -1,0 +1,179 @@
+@import "tailwindcss";
+
+/* ============================================================
+   DESIGN TOKENS — Tailwind v4 CSS-based config
+   --color-* → bg-*, text-*, border-* utilities
+   --font-*  → font-* utilities
+   --aspect-* → aspect-* utilities
+   ============================================================ */
+@theme {
+  /* Brand colors */
+  --color-brand-teal:   #1A9BBF;
+  --color-brand-amber:  #F59E0B;
+  --color-brand-coral:  #E8634A;
+  --color-brand-cream:  #FFFBF5;
+
+  /* Category colors */
+  --color-category-science:    #0D9488;
+  --color-category-history:    #B45309;
+  --color-category-tech:       #2563EB;
+  --color-category-nature:     #16A34A;
+  --color-category-body:       #E11D48;
+  --color-category-society:    #7C3AED;
+  --color-category-space:      #1E40AF;
+  --color-category-emotions:   #EA580C;
+  --color-category-philosophy: #4338CA;
+
+  /* Font families */
+  --font-display:   'Baloo 2', sans-serif;
+  --font-body:      'Lexend', sans-serif;
+  --font-editorial: 'Inter', sans-serif;
+
+  /* Custom aspect ratios */
+  --aspect-infographic: 9/16;
+  --aspect-card:        4/5;
+
+  /* Custom max-widths */
+  --max-width-infographic: 450px;
+  --max-width-content:     680px;
+
+  /* Animation definitions */
+  --animate-fade-up:   fadeUp 300ms ease-out forwards;
+  --animate-pop:       pop 350ms ease-out forwards;
+  --animate-pop-light: popLight 250ms ease-out forwards;
+  --animate-shake:     shake 300ms ease-in-out;
+}
+
+/* Keyframes live outside @theme */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes pop {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.3); }
+  100% { transform: scale(1); }
+}
+@keyframes popLight {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.12); }
+  100% { transform: scale(1); }
+}
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%      { transform: translateX(-4px); }
+  40%      { transform: translateX(4px); }
+  60%      { transform: translateX(-4px); }
+  80%      { transform: translateX(4px); }
+}
+
+/* ============================================================
+   AGE-MODE TOKENS
+   :root    = under-13 defaults
+   .age-13plus on <html> = 13+ overrides
+   Switched via no-flash script in layout.tsx
+   ============================================================ */
+:root {
+  --bg-base:           #FFFBF5;
+  --bg-card:           #FFFFFF;
+  --text-primary:      #1C1917;
+  --text-secondary:    #78716C;
+  --brand-primary:     #C2410C;
+  --brand-light:       #FDBA74;
+  --radius-card:       20px;
+  --radius-element:    16px;
+  --age-font-body:     'Lexend', sans-serif;
+  --age-font-display:  'Baloo 2', sans-serif;
+  --text-body-size:    1.125rem;
+  --text-body-leading: 1.8;
+  --touch-min:         3.75rem;
+}
+
+.age-13plus {
+  --bg-base:           #F8FAFC;
+  --text-primary:      #0F172A;
+  --text-secondary:    #64748B;
+  --brand-primary:     #1D4ED8;
+  --brand-light:       #BFDBFE;
+  --radius-card:       12px;
+  --radius-element:    8px;
+  --age-font-body:     'Inter', sans-serif;
+  --age-font-display:  'Inter', sans-serif;
+  --text-body-size:    1rem;
+  --text-body-leading: 1.65;
+  --touch-min:         3rem;
+}
+
+/* ============================================================
+   BASE STYLES
+   ============================================================ */
+body {
+  background-color: var(--bg-base);
+  color: var(--text-primary);
+  font-family: var(--age-font-body);
+  font-size: var(--text-body-size);
+  line-height: var(--text-body-leading);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ============================================================
+   FOCUS STYLES — Tailwind resets these; must be explicit
+   ============================================================ */
+*:focus-visible {
+  outline: 3px solid #2563EB;
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* ============================================================
+   PREFERS-REDUCED-MOTION — non-negotiable accessibility
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ============================================================
+   DYSLEXIA MODE — toggled via .dyslexia-mode on <html>
+   ============================================================ */
+.dyslexia-mode body {
+  letter-spacing: 0.05em;
+  word-spacing: 0.1em;
+  line-height: 2.1;
+}
+.dyslexia-mode p {
+  max-width: 55ch;
+}
+
+/* ============================================================
+   SCROLL PROGRESS BAR
+   ============================================================ */
+.scroll-progress-bar {
+  height: 3px;
+  background-color: var(--brand-primary);
+  transform-origin: left;
+  transition: width 100ms linear;
+}
+
+/* ============================================================
+   INFOGRAPHIC CONTAINER
+   ============================================================ */
+.infographic-container {
+  width: 100%;
+  max-width: var(--max-width-infographic);
+  margin-left: auto;
+  margin-right: auto;
+  background-color: var(--bg-card);
+  border-radius: var(--radius-card);
+  box-shadow: 0 4px 24px rgb(0 0 0 / 0.08);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  scroll-behavior: smooth;
+  position: relative;
+}

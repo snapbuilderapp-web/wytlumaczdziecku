@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node:*)",
+      "Bash(npx create-next-app@latest:*)",
+      "Bash(cd /Users/robert/Code/wytlumaczdziecku/explaintomykidapp && npm install @supabase/supabase-js @supabase/ssr @google/generative-ai @lottiefiles/react-lottie-player zod plausible-tracker 2>&1)",
+      "Bash(npx tsc:*)",
+      "Bash(npm run:*)",
+      "Bash(tail:*)",
+      "Bash(npx tsx:*)",
+      "Bash(cat:*)",
+      "Bash(pkill:*)",
+      "Bash(curl:*)"
+    ]
+  }
+}
