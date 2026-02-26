@@ -75,6 +75,10 @@ export default async function InfographicPage({ params }: PageProps) {
 
   if (!infographic) notFound()
 
+  const heroImageSrc =
+    infographic.hero_image_url ??
+    `/api/og/${infographic.slug}?c=${infographic.category_id}&t=${encodeURIComponent(infographic.title_pl)}`
+
   return (
     <>
       <Header />
@@ -82,6 +86,8 @@ export default async function InfographicPage({ params }: PageProps) {
         <InfographicViewer
           slug={infographic.slug}
           infographicId={infographic.id}
+          title={infographic.title_pl}
+          heroImageSrc={heroImageSrc}
           contentUnder13={infographic.content_under13}
           content13plus={infographic.content_13plus}
           likeCount={infographic.like_count}
@@ -94,3 +100,4 @@ export default async function InfographicPage({ params }: PageProps) {
     </>
   )
 }
+

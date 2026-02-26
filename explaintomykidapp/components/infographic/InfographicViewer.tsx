@@ -9,12 +9,15 @@ import { InfographicSection } from './InfographicSection'
 import { LikeButton } from './LikeButton'
 import { ConversationStarters } from './ConversationStarters'
 import { AiDraftWatermark } from './AiDraftWatermark'
+import { HeroImagePanel } from './HeroImagePanel'
 import { Rys } from '@/components/mascot/Rys'
 import type { InfographicContent } from '@/types'
 
 interface InfographicViewerProps {
   slug: string
   infographicId: string
+  title: string
+  heroImageSrc: string
   contentUnder13: InfographicContent | null
   content13plus: InfographicContent | null
   likeCount: number
@@ -25,6 +28,8 @@ interface InfographicViewerProps {
 export function InfographicViewer({
   slug,
   infographicId,
+  title,
+  heroImageSrc,
   contentUnder13,
   content13plus,
   likeCount,
@@ -54,6 +59,15 @@ export function InfographicViewer({
     >
       {/* Scroll progress bar */}
       <ScrollProgress value={progress} />
+
+      {/* Hero infographic image */}
+      <div className="px-4 pt-4">
+        <HeroImagePanel
+          src={heroImageSrc}
+          alt={`Infografika: ${title}`}
+          downloadName={slug}
+        />
+      </div>
 
       {/* AI draft notice */}
       {aiDraft && !expertReviewed && (
