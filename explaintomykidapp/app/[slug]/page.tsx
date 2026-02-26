@@ -1,12 +1,21 @@
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
+import { createClient } from '@supabase/supabase-js'
 import { Header } from '@/components/layout/Header'
 import { BottomTabBar } from '@/components/layout/BottomTabBar'
 import { PageWrapper } from '@/components/layout/PageWrapper'
 import { AgeSelectorModal } from '@/components/age/AgeSelectorModal'
 import { InfographicViewer } from '@/components/infographic/InfographicViewer'
-import { createClient } from '@/lib/supabase/server'
 import type { Infographic } from '@/types'
+
+// Use a plain anon client — no cookies() needed for public read-only data.
+// The cookies-based server client throws at build time (generateStaticParams).
+function getSupabase() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+  )
+}
 
 export const revalidate = 86400 // 24h ISR
 
@@ -15,7 +24,7 @@ interface PageProps {
 }
 
 async function getInfographic(slug: string): Promise<Infographic | null> {
-  const supabase = await createClient()
+  const supabase = getSupabase()
   const { data } = await supabase
     .from('infographics')
     .select('*')
@@ -49,7 +58,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export async function generateStaticParams() {
   try {
-    const supabase = await createClient()
+    const supabase = getSupabase()
     const { data } = await supabase
       .from('infographics')
       .select('slug')
