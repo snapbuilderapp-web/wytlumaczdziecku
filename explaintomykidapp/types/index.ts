@@ -4,6 +4,8 @@
 
 export type AgeMode = 'under13' | '13plus'
 
+export type Lang = 'pl' | 'en'
+
 export type AgeGroup = 'under13' | '13plus' | 'both'
 
 export type InfographicStatus =
@@ -73,12 +75,15 @@ export interface Category {
 export interface Infographic {
   id: string
   slug: string
+  slug_en: string | null
   title_pl: string
   title_en: string | null
   category_id: CategoryId
   age_group: AgeGroup
   content_under13: InfographicContent | null
   content_13plus: InfographicContent | null
+  content_under13_en: InfographicContent | null
+  content_13plus_en: InfographicContent | null
   hero_image_url: string | null
   status: InfographicStatus
   view_count: number
@@ -100,8 +105,11 @@ export interface Infographic {
 export interface InfographicCard {
   id: string
   slug: string
+  slug_en: string | null
   title_pl: string
+  title_en: string | null
   category_id: CategoryId
+  age_group: AgeGroup
   hero_image_url: string | null
   like_count: number
   view_count: number
@@ -154,7 +162,9 @@ export interface SearchResult {
 
 export interface AutocompleteResult {
   slug: string
+  slug_en: string | null
   title_pl: string
+  title_en: string | null
   category_id: CategoryId
 }
 

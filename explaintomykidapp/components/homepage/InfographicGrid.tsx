@@ -1,23 +1,30 @@
 import Link from 'next/link'
 import { InfographicCard } from '@/components/infographic/InfographicCard'
 import { SkeletonCardGrid } from '@/components/ui/SkeletonCard'
-import type { InfographicCard as ICard } from '@/types'
+import type { InfographicCard as ICard, Lang } from '@/types'
 
 interface InfographicGridProps {
   title: string
   items: ICard[]
   viewAllHref?: string
+  viewAllLabel?: string
   loading?: boolean
   columns?: 2 | 3
+  lang?: Lang
 }
 
 export function InfographicGrid({
   title,
   items,
   viewAllHref,
+  viewAllLabel,
   loading = false,
   columns = 2,
+  lang = 'pl',
 }: InfographicGridProps) {
+  const noItemsLabel = lang === 'en' ? 'No topics to display.' : 'Brak tematów do wyświetlenia.'
+  const defaultViewAll = lang === 'en' ? 'View all →' : 'Zobacz wszystkie →'
+
   return (
     <section>
       <div className="flex items-center justify-between mb-3">
@@ -29,7 +36,7 @@ export function InfographicGrid({
             href={viewAllHref}
             className="text-sm text-[var(--brand-primary)] hover:underline"
           >
-            Zobacz wszystkie →
+            {viewAllLabel ?? defaultViewAll}
           </Link>
         )}
       </div>
@@ -38,7 +45,7 @@ export function InfographicGrid({
         <SkeletonCardGrid count={columns === 3 ? 6 : 4} />
       ) : items.length === 0 ? (
         <p className="text-[var(--text-secondary)] text-sm py-4 text-center">
-          Brak tematów do wyświetlenia.
+          {noItemsLabel}
         </p>
       ) : (
         <div
@@ -48,7 +55,7 @@ export function InfographicGrid({
           ].join(' ')}
         >
           {items.map((item, i) => (
-            <InfographicCard key={item.id} infographic={item} priority={i < 4} />
+            <InfographicCard key={item.id} infographic={item} priority={i < 4} lang={lang} />
           ))}
         </div>
       )}

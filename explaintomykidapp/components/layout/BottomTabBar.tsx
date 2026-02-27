@@ -3,32 +3,40 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
-const tabs = [
-  { href: '/',        label: 'Główna',  icon: HomeIcon  },
-  { href: '/tematy',  label: 'Tematy',  icon: GridIcon  },
-  { href: '/szukaj',  label: 'Szukaj',  icon: SearchIcon },
-  { href: '/ulubione', label: 'Ulubione', icon: HeartIcon },
-] as const
+const PL_TABS = [
+  { hrefBase: '/',        label: 'Główna',  icon: HomeIcon  },
+  { hrefBase: '/tematy',  label: 'Tematy',  icon: GridIcon  },
+  { hrefBase: '/szukaj',  label: 'Szukaj',  icon: SearchIcon },
+  { hrefBase: '/ulubione', label: 'Ulubione', icon: HeartIcon },
+]
+
+const EN_TABS = [
+  { hrefBase: '/en',         label: 'Home',      icon: HomeIcon  },
+  { hrefBase: '/en/topics',  label: 'Topics',    icon: GridIcon  },
+  { hrefBase: '/en/search',  label: 'Search',    icon: SearchIcon },
+  { hrefBase: '/en/favourites', label: 'Favourites', icon: HeartIcon },
+]
 
 export function BottomTabBar() {
   const pathname = usePathname()
+  const isEnglish = pathname.startsWith('/en')
+  const tabs = isEnglish ? EN_TABS : PL_TABS
 
   return (
     <nav
       className="fixed bottom-0 inset-x-0 z-40 bg-[var(--bg-base)] border-t border-stone-200"
       style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
-      aria-label="Nawigacja główna"
+      aria-label={isEnglish ? 'Main navigation' : 'Nawigacja główna'}
     >
       <div className="flex items-stretch justify-around max-w-2xl mx-auto">
-        {tabs.map(({ href, label, icon: Icon }) => {
-          const isActive =
-            href === '/'
-              ? pathname === '/'
-              : pathname.startsWith(href)
+        {tabs.map(({ hrefBase, label, icon: Icon }) => {
+          const isActive = isEnglish
+            ? (hrefBase === '/en' ? pathname === '/en' || pathname === '/en/' : pathname.startsWith(hrefBase))
+            : (hrefBase === '/' ? pathname === '/' : pathname.startsWith(hrefBase))
           return (
             <Link
-              key={href}
-              href={href}
+              key={hrefBase}
+              href={hrefBase}
               className={[
                 'flex flex-col items-center justify-center gap-0.5 flex-1',
                 'text-xs font-medium min-h-[var(--touch-min)]',

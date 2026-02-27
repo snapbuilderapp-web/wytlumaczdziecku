@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { ExpertReviewBadge } from '@/components/trust/ExpertReviewBadge'
-import type { InfographicCard as ICard } from '@/types'
+import type { InfographicCard as ICard, Lang } from '@/types'
 
 const CATEGORY_COLORS: Record<string, string> = {
   science: 'bg-category-science',
@@ -18,13 +18,17 @@ const CATEGORY_COLORS: Record<string, string> = {
 interface InfographicCardProps {
   infographic: ICard
   priority?: boolean
+  lang?: Lang
 }
 
-export function InfographicCard({ infographic, priority = false }: InfographicCardProps) {
+export function InfographicCard({ infographic, priority = false, lang = 'pl' }: InfographicCardProps) {
   const {
     slug,
+    slug_en,
     title_pl,
+    title_en,
     category_id,
+    age_group,
     hero_image_url,
     like_count,
     view_count,
@@ -32,11 +36,14 @@ export function InfographicCard({ infographic, priority = false }: InfographicCa
     expert_reviewed,
   } = infographic
 
+  const isEnglish = lang === 'en'
+  const displayTitle = isEnglish ? (title_en ?? title_pl) : title_pl
+  const href = isEnglish && slug_en ? `/en/${slug_en}` : `/${slug}`
+
   const accentColor = CATEGORY_COLORS[category_id] ?? 'bg-stone-400'
 
-  // hero_image_url is stored as an absolute OG URL (e.g. https://wytlumaczdziecku.vercel.app/api/og/...) or
-  // a Supabase storage URL. next/image cannot optimize its own API routes via localPatterns,
-  // so we only let next/image optimize genuine Supabase storage images.
+  // hero_image_url is stored as an absolute OG URL or Supabase storage URL.
+  // next/image cannot optimize its own API routes, so only optimize genuine Supabase storage images.
   const imageSrc = hero_image_url
     ?? `/api/og/${slug}?c=${category_id}&t=${encodeURIComponent(title_pl)}`
   const isSupabaseImage = imageSrc.includes('.supabase.co/storage/')
@@ -44,16 +51,23 @@ export function InfographicCard({ infographic, priority = false }: InfographicCa
 
   return (
     <Link
-      href={`/${slug}`}
-      className="group block aspect-[4/5] bg-[var(--bg-card)] rounded-[var(--radius-card)]
+      href={href}
+      className="group relative block aspect-[4/5] bg-[var(--bg-card)] rounded-[var(--radius-card)]
                  shadow-sm overflow-hidden
                  transition-all duration-150 ease-out
                  hover:scale-[1.02] hover:shadow-md
                  focus-visible:ring-4 focus-visible:ring-blue-500/30"
-      aria-label={title_pl}
+      aria-label={displayTitle}
     >
       {/* Category color bar */}
       <div className={`h-2 ${accentColor}`} aria-hidden="true" />
+
+      {/* 13+ badge */}
+      {age_group === '13plus' && (
+        <div className="absolute top-3 right-3 z-10 bg-slate-800/80 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
+          13+
+        </div>
+      )}
 
       {/* Hero image */}
       <div className="relative h-[55%] bg-stone-100">
@@ -73,16 +87,16 @@ export function InfographicCard({ infographic, priority = false }: InfographicCa
         <h3 className="font-[family-name:var(--age-font-display)] font-bold text-sm leading-snug
                        text-[var(--text-primary)] line-clamp-2 group-hover:text-[var(--brand-primary)]
                        transition-colors">
-          {title_pl}
+          {displayTitle}
         </h3>
 
         {/* Meta row */}
         <div className="flex items-center gap-2 text-xs text-[var(--text-secondary)]">
-          <span className="flex items-center gap-0.5" title="Wyświetlenia">
+          <span className="flex items-center gap-0.5" title={isEnglish ? 'Views' : 'Wyświetlenia'}>
             <span aria-hidden="true">👁</span>
             <span>{formatCount(view_count)}</span>
           </span>
-          <span className="flex items-center gap-0.5" title="Polubienia">
+          <span className="flex items-center gap-0.5" title={isEnglish ? 'Likes' : 'Polubienia'}>
             <span aria-hidden="true">❤</span>
             <span>{formatCount(like_count)}</span>
           </span>

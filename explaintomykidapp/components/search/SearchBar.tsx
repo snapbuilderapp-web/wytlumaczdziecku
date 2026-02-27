@@ -6,7 +6,12 @@ import { useAgeMode } from '@/hooks/useAgeMode'
 import { analytics } from '@/lib/analytics/plausible'
 import type { AutocompleteResult } from '@/types'
 
-export function SearchBar({ initialValue = '' }: { initialValue?: string }) {
+interface SearchBarProps {
+  initialValue?: string
+  lang?: 'pl' | 'en'
+}
+
+export function SearchBar({ initialValue = '', lang = 'pl' }: SearchBarProps) {
   const { ageMode } = useAgeMode()
   const router = useRouter()
   const [query, setQuery] = useState(initialValue)
@@ -16,13 +21,14 @@ export function SearchBar({ initialValue = '' }: { initialValue?: string }) {
   const inputRef = useRef<HTMLInputElement>(null)
 
   const isYounger = ageMode === 'under13'
+  const isEnglish = lang === 'en'
 
   const fetchSuggestions = useCallback(async (q: string) => {
     if (q.length < 2) { setSuggestions([]); return }
-    const res = await fetch(`/api/autocomplete?q=${encodeURIComponent(q)}`)
+    const res = await fetch(`/api/autocomplete?q=${encodeURIComponent(q)}&lang=${lang}`)
     const data = await res.json()
     setSuggestions(data.suggestions ?? [])
-  }, [])
+  }, [lang])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const q = e.target.value
@@ -37,19 +43,28 @@ export function SearchBar({ initialValue = '' }: { initialValue?: string }) {
     if (!query.trim()) return
     setOpen(false)
     analytics.search(query)
-    router.push(`/szukaj?q=${encodeURIComponent(query.trim())}`)
+    const searchPath = isEnglish ? '/en/search' : '/szukaj'
+    router.push(`${searchPath}?q=${encodeURIComponent(query.trim())}`)
   }
 
-  const handleSuggestionClick = (slug: string) => {
+  const handleSuggestionClick = (s: AutocompleteResult) => {
     setOpen(false)
-    router.push(`/${slug}`)
+    const href = isEnglish && s.slug_en ? `/en/${s.slug_en}` : `/${s.slug}`
+    router.push(href)
   }
+
+  const placeholder = isEnglish
+    ? (isYounger ? 'What do you want to learn today?' : 'Search topics...')
+    : (isYounger ? 'Czego chcesz się dziś dowiedzieć?' : 'Wyszukaj temat...')
+
+  const labelText = isEnglish ? 'Search topics' : 'Szukaj tematu'
+  const autocompleteLabel = isEnglish ? 'Search suggestions' : 'Podpowiedzi wyszukiwania'
 
   return (
     <div className="relative w-full">
       <form onSubmit={handleSubmit} role="search">
         <label htmlFor="search-input" className="sr-only">
-          Szukaj tematu
+          {labelText}
         </label>
         <div className="relative">
           <span
@@ -66,11 +81,7 @@ export function SearchBar({ initialValue = '' }: { initialValue?: string }) {
             onChange={handleChange}
             onFocus={() => query.length >= 2 && setOpen(true)}
             onBlur={() => setTimeout(() => setOpen(false), 150)}
-            placeholder={
-              isYounger
-                ? 'Czego chcesz się dziś dowiedzieć?'
-                : 'Wyszukaj temat...'
-            }
+            placeholder={placeholder}
             autoComplete="off"
             className={[
               'w-full pl-10 pr-4 py-3 bg-[var(--bg-card)] text-[var(--text-primary)]',
@@ -91,18 +102,18 @@ export function SearchBar({ initialValue = '' }: { initialValue?: string }) {
           className="absolute top-full left-0 right-0 mt-1 bg-[var(--bg-card)] border border-stone-200
                      rounded-xl shadow-lg z-20 overflow-hidden"
           role="listbox"
-          aria-label="Podpowiedzi wyszukiwania"
+          aria-label={autocompleteLabel}
         >
           {suggestions.map((s) => (
             <li key={s.slug} role="option" aria-selected="false">
               <button
                 type="button"
-                onClick={() => handleSuggestionClick(s.slug)}
+                onClick={() => handleSuggestionClick(s)}
                 className="w-full text-left px-4 py-3 text-sm text-[var(--text-primary)]
                            hover:bg-stone-50 transition-colors flex items-center gap-2"
               >
                 <span className="text-[var(--text-secondary)]" aria-hidden="true">🔍</span>
-                {s.title_pl}
+                {isEnglish ? (s.title_en ?? s.title_pl) : s.title_pl}
               </button>
             </li>
           ))}

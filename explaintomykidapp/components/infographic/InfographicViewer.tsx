@@ -20,6 +20,9 @@ interface InfographicViewerProps {
   heroImageSrc: string
   contentUnder13: InfographicContent | null
   content13plus: InfographicContent | null
+  contentUnder13En?: InfographicContent | null
+  content13plusEn?: InfographicContent | null
+  lang?: 'pl' | 'en'
   likeCount: number
   aiDraft: boolean
   expertReviewed: boolean
@@ -32,6 +35,9 @@ export function InfographicViewer({
   heroImageSrc,
   contentUnder13,
   content13plus,
+  contentUnder13En,
+  content13plusEn,
+  lang = 'pl',
   likeCount,
   aiDraft,
   expertReviewed,
@@ -40,13 +46,19 @@ export function InfographicViewer({
   const { ageMode } = useAgeMode()
   const progress = useScrollProgress(containerRef)
 
-  const content = ageMode === '13plus' ? (content13plus ?? contentUnder13) : (contentUnder13 ?? content13plus)
+  // For English: use English content if available, fallback to Polish
+  const isEnglish = lang === 'en'
+  const content = ageMode === '13plus'
+    ? (isEnglish ? (content13plusEn ?? contentUnder13En ?? content13plus ?? contentUnder13) : (content13plus ?? contentUnder13))
+    : (isEnglish ? (contentUnder13En ?? content13plusEn ?? contentUnder13 ?? content13plus) : (contentUnder13 ?? content13plus))
+
+  const noContentMsg = isEnglish ? 'No content available for this age group.' : 'Brak treści dla tej grupy wiekowej.'
 
   if (!content) {
     return (
       <div className="infographic-container p-8 text-center">
         <Rys state="thinking" size={80} className="mx-auto mb-4" />
-        <p className="text-[var(--text-secondary)]">Brak treści dla tej grupy wiekowej.</p>
+        <p className="text-[var(--text-secondary)]">{noContentMsg}</p>
       </div>
     )
   }

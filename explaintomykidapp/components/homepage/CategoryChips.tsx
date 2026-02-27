@@ -1,19 +1,24 @@
 import Link from 'next/link'
-import type { Category } from '@/types'
+import type { Category, Lang } from '@/types'
 
 interface CategoryChipsProps {
   categories: Category[]
   activeCategory?: string
+  lang?: Lang
 }
 
-export function CategoryChips({ categories, activeCategory }: CategoryChipsProps) {
+export function CategoryChips({ categories, activeCategory, lang = 'pl' }: CategoryChipsProps) {
+  const basePath = lang === 'en' ? '/en/topics' : '/tematy'
+  const allLabel = lang === 'en' ? 'All' : 'Wszystkie'
+  const navLabel = lang === 'en' ? 'Topic categories' : 'Kategorie tematów'
+
   return (
     <nav
       className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide -mx-4 px-4"
-      aria-label="Kategorie tematów"
+      aria-label={navLabel}
     >
       <Link
-        href="/tematy"
+        href={basePath}
         className={[
           'flex items-center gap-1.5 shrink-0 px-3 py-1.5 rounded-full text-sm font-medium',
           'transition-all duration-150 whitespace-nowrap',
@@ -23,12 +28,12 @@ export function CategoryChips({ categories, activeCategory }: CategoryChipsProps
         ].join(' ')}
         aria-current={!activeCategory ? 'page' : undefined}
       >
-        Wszystkie
+        {allLabel}
       </Link>
       {categories.map((cat) => (
         <Link
           key={cat.id}
-          href={`/tematy/${cat.id}`}
+          href={`${basePath}/${cat.id}`}
           className={[
             'flex items-center gap-1.5 shrink-0 px-3 py-1.5 rounded-full text-sm font-medium',
             'transition-all duration-150 whitespace-nowrap',
@@ -39,7 +44,7 @@ export function CategoryChips({ categories, activeCategory }: CategoryChipsProps
           aria-current={activeCategory === cat.id ? 'page' : undefined}
         >
           <span aria-hidden="true">{cat.icon_emoji}</span>
-          {cat.name_pl}
+          {lang === 'en' ? cat.name_en : cat.name_pl}
         </Link>
       ))}
     </nav>

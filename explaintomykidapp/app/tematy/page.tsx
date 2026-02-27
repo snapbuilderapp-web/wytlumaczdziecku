@@ -4,7 +4,7 @@ import { BottomTabBar } from '@/components/layout/BottomTabBar'
 import { PageWrapper } from '@/components/layout/PageWrapper'
 import { AgeSelectorModal } from '@/components/age/AgeSelectorModal'
 import { CategoryChips } from '@/components/homepage/CategoryChips'
-import { InfographicGrid } from '@/components/homepage/InfographicGrid'
+import { AgeFilteredGrid } from '@/components/homepage/AgeFilteredGrid'
 import { createClient } from '@/lib/supabase/server'
 import type { Category, InfographicCard } from '@/types'
 
@@ -19,6 +19,8 @@ const CATEGORIES: Category[] = [
   { id: 'body',       name_pl: 'Ciało i zdrowie', name_en: 'Body',     color_hex: '#E11D48', icon_emoji: '🫀', description_pl: null, display_order: 5 },
   { id: 'space',      name_pl: 'Kosmos',        name_en: 'Space',      color_hex: '#1E40AF', icon_emoji: '🔭', description_pl: null, display_order: 7 },
   { id: 'society',    name_pl: 'Społeczeństwo', name_en: 'Society',    color_hex: '#7C3AED', icon_emoji: '🏘️', description_pl: null, display_order: 6 },
+  { id: 'emotions',   name_pl: 'Emocje',        name_en: 'Emotions',   color_hex: '#DB2777', icon_emoji: '💭', description_pl: null, display_order: 8 },
+  { id: 'philosophy', name_pl: 'Filozofia',     name_en: 'Philosophy', color_hex: '#D97706', icon_emoji: '💡', description_pl: null, display_order: 9 },
 ]
 
 export default async function TematyPage() {
@@ -27,10 +29,10 @@ export default async function TematyPage() {
     const supabase = await createClient()
     const { data } = await supabase
       .from('infographics')
-      .select('id, slug, title_pl, category_id, hero_image_url, like_count, view_count, reading_level, emotional_weight, ai_draft, expert_reviewed')
+      .select('id, slug, title_pl, category_id, age_group, hero_image_url, like_count, view_count, reading_level, emotional_weight, ai_draft, expert_reviewed')
       .eq('status', 'published')
       .order('published_at', { ascending: false })
-      .limit(48)
+      .limit(200)
     items = (data ?? []) as InfographicCard[]
   } catch {}
 
@@ -44,7 +46,7 @@ export default async function TematyPage() {
         <div className="mb-5">
           <CategoryChips categories={CATEGORIES} />
         </div>
-        <InfographicGrid title={`${items.length} tematów`} items={items} columns={3} />
+        <AgeFilteredGrid items={items} columns={3} />
       </PageWrapper>
       <BottomTabBar />
       <AgeSelectorModal />

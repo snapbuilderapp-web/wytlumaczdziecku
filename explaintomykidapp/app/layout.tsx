@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { Baloo_2, Lexend, Inter } from 'next/font/google'
+import { AgeModeProvider } from '@/components/age/AgeModeProvider'
 import './globals.css'
 
 const baloo = Baloo_2({
@@ -62,7 +63,9 @@ export default function RootLayout({
             __html: `try{if(localStorage.getItem('wdk_age')==='13plus')document.documentElement.classList.add('age-13plus')}catch(e){}`,
           }}
         />
-        {children}
+        <AgeModeProvider>
+          {children}
+        </AgeModeProvider>
       </body>
     </html>
   )
