@@ -83,6 +83,7 @@ export default async function EnglishInfographicPage({ params }: PageProps) {
   if (!infographic) notFound()
 
   const heroImageSrc =
+    infographic.hero_image_url_en ??
     infographic.hero_image_url ??
     `/api/og/${infographic.slug}?c=${infographic.category_id}&t=${encodeURIComponent(infographic.title_en ?? infographic.title_pl)}`
 

@@ -37,6 +37,7 @@ const imageModel  = gemini.getGenerativeModel({ model: IMAGE_MODEL })
 
 const isDryRun    = process.argv.includes('--dry-run')
 const isOverwrite = process.argv.includes('--overwrite')
+const isEnglish   = process.argv.includes('--lang=en')
 const slugArg     = process.argv.find(a => a.startsWith('--slug='))?.split('=')[1]
 const LOCAL_DIR   = path.join(process.cwd(), 'public', 'infographics')
 
@@ -54,11 +55,15 @@ async function ensureBucket() {
 
 // ── Build prompt ──────────────────────────────────────────────────────────────
 
-function buildPrompt(title: string, ageGroup: string): string {
+function buildPrompt(title: string, ageGroup: string, lang: 'pl' | 'en'): string {
+  const langNote = lang === 'en'
+    ? 'Include text in English (double-check for typos or misspelled words).'
+    : 'Include text in Polish (double-check for typos or misspelled words).'
+
   if (ageGroup === '13plus') {
-    return `Create a visually engaging infographic for a teenager (13+ years old) about the topic: "${title}". The image should be informative, thoughtful, and age-appropriate for teens — use a more mature visual style with clean layout, icons, and clear data/text. Include text in Polish (double-check for typos or misspelled words). Square format, 1024x1024. It should contain at least 20 words for explanation, with title. Avoid cartoon or childish aesthetics — prefer modern, editorial infographic style.`
+    return `Create a visually engaging infographic for a teenager (13+ years old) about the topic: "${title}". The image should be informative, thoughtful, and age-appropriate for teens — use a more mature visual style with clean layout, icons, and clear data/text. ${langNote} Square format, 1024x1024. It should contain at least 20 words for explanation, with title. Avoid cartoon or childish aesthetics — prefer modern, editorial infographic style.`
   }
-  return `Create a visually engaging, portrait-oriented infographic for a child under 13 years old about the topic: "${title}". The image should be colorful, fun, and educational. Include text in Polish (double-check for typos or misspelled words). Square format, 1024x1024. It should contain at least 20 words for explanation, with title.`
+  return `Create a visually engaging, portrait-oriented infographic for a child under 13 years old about the topic: "${title}". The image should be colorful, fun, and educational. ${langNote} Square format, 1024x1024. It should contain at least 20 words for explanation, with title.`
 }
 
 // ── Generate image ────────────────────────────────────────────────────────────
@@ -101,10 +106,11 @@ async function uploadImage(slug: string, imageBuffer: Buffer): Promise<string> {
 
 // ── Update DB ─────────────────────────────────────────────────────────────────
 
-async function updateHeroUrl(id: string, url: string) {
+async function updateHeroUrl(id: string, url: string, lang: 'pl' | 'en') {
+  const field = lang === 'en' ? 'hero_image_url_en' : 'hero_image_url'
   const { error } = await supabase
     .from('infographics')
-    .update({ hero_image_url: url })
+    .update({ [field]: url })
     .eq('id', id)
   if (error) throw new Error(`DB update failed: ${error.message}`)
 }
@@ -118,7 +124,8 @@ function sleep(ms: number) {
 // ── Main ──────────────────────────────────────────────────────────────────────
 
 async function main() {
-  console.log(`\n🎨 Hero image generation (model: ${IMAGE_MODEL})`)
+  const lang = isEnglish ? 'en' : 'pl'
+  console.log(`\n🎨 Hero image generation (model: ${IMAGE_MODEL}, lang: ${lang})`)
   if (isDryRun) console.log('   DRY RUN — no images will be generated\n')
 
   await ensureBucket()
@@ -126,24 +133,35 @@ async function main() {
   // Fetch infographics
   let query = supabase
     .from('infographics')
-    .select('id, slug, title_pl, category_id, age_group, hero_image_url')
+    .select('id, slug, slug_en, title_pl, title_en, category_id, age_group, hero_image_url, hero_image_url_en')
     .eq('status', 'published')
 
+  if (isEnglish) {
+    // Only process infographics that have English content
+    query = query.not('slug_en', 'is', null)
+  }
+
   if (slugArg) {
-    query = query.eq('slug', slugArg)
+    query = isEnglish
+      ? query.eq('slug_en', slugArg)
+      : query.eq('slug', slugArg)
   }
 
   const { data: all, error } = await query
   if (error) { console.error('❌ DB fetch failed:', error.message); process.exit(1) }
   if (!all?.length) { console.log('✓ No infographics found.\n'); return }
 
-  // Filter in JS to avoid PostgREST NULL-exclusion quirks with NOT ILIKE
+  // Filter out already-imaged rows (unless --overwrite)
   const supabaseHost = SUPABASE_URL.replace('https://', '')
+  const urlField = isEnglish ? 'hero_image_url_en' : 'hero_image_url'
   const infographics = isOverwrite
     ? all
-    : all.filter(r => !r.hero_image_url?.includes(`${supabaseHost}/storage`))
+    : all.filter(r => !r[urlField]?.includes(`${supabaseHost}/storage`))
 
-  if (!infographics.length) { console.log('✓ All infographics already have Supabase Storage images. Use --overwrite to regenerate.\n'); return }
+  if (!infographics.length) {
+    console.log(`✓ All infographics already have ${lang} Supabase Storage images. Use --overwrite to regenerate.\n`)
+    return
+  }
 
   console.log(`   Processing ${infographics.length} infographic(s)\n`)
 
@@ -152,31 +170,33 @@ async function main() {
 
   for (let i = 0; i < infographics.length; i++) {
     const inf = infographics[i]
+    const title    = isEnglish ? (inf.title_en ?? inf.title_pl) : inf.title_pl
+    const fileSlug = isEnglish ? (inf.slug_en ?? inf.slug) : inf.slug
     const ageLabel = inf.age_group === '13plus' ? ' [13+]' : ''
-    console.log(`[${i + 1}/${infographics.length}] ${inf.title_pl}${ageLabel}`)
+    console.log(`[${i + 1}/${infographics.length}] ${title}${ageLabel}`)
 
     if (isDryRun) {
-      console.log(`  prompt: ${inf.age_group === '13plus' ? 'teen/editorial' : 'child/fun'}`)
+      console.log(`  prompt: ${inf.age_group === '13plus' ? 'teen/editorial' : 'child/fun'} [${lang}]`)
       console.log('  (dry run, skipping)\n')
       continue
     }
 
     try {
       process.stdout.write('  Generating image... ')
-      const imageBuffer = await generateImage(buildPrompt(inf.title_pl, inf.age_group ?? 'both'))
+      const imageBuffer = await generateImage(buildPrompt(title, inf.age_group ?? 'both', lang))
       console.log(`✓ (${(imageBuffer.length / 1024).toFixed(0)} KB)`)
 
       // Save locally to public/infographics/
       fs.mkdirSync(LOCAL_DIR, { recursive: true })
-      const localPath = path.join(LOCAL_DIR, `${inf.slug}.png`)
+      const localPath = path.join(LOCAL_DIR, `${fileSlug}.png`)
       fs.writeFileSync(localPath, imageBuffer)
-      console.log(`  Saved locally: public/infographics/${inf.slug}.png`)
+      console.log(`  Saved locally: public/infographics/${fileSlug}.png`)
 
       process.stdout.write('  Uploading to Supabase Storage... ')
-      const publicUrl = await uploadImage(inf.slug, imageBuffer)
+      const publicUrl = await uploadImage(fileSlug, imageBuffer)
       console.log('✓')
 
-      await updateHeroUrl(inf.id, publicUrl)
+      await updateHeroUrl(inf.id, publicUrl, lang)
       console.log(`  URL: ${publicUrl}\n`)
       success++
     } catch (err) {
@@ -191,8 +211,8 @@ async function main() {
 
   console.log(`📊 Done: ${success} succeeded, ${failed} failed`)
   if (success > 0) {
-    console.log('   Images are live in Supabase Storage → infographic-images bucket')
-    console.log('   hero_image_url updated in all processed rows\n')
+    console.log(`   Images are live in Supabase Storage → infographic-images bucket`)
+    console.log(`   ${urlField} updated in all processed rows\n`)
   }
 }
 

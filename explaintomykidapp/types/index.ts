@@ -85,6 +85,7 @@ export interface Infographic {
   content_under13_en: InfographicContent | null
   content_13plus_en: InfographicContent | null
   hero_image_url: string | null
+  hero_image_url_en: string | null
   status: InfographicStatus
   view_count: number
   like_count: number
