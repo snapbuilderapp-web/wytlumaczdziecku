@@ -1,9 +1,12 @@
 'use client'
 
+import { usePathname } from 'next/navigation'
 import { useAgeMode } from '@/hooks/useAgeMode'
 
 export function AgeToggle() {
   const { ageMode, setAgeMode, isLoaded } = useAgeMode()
+  const pathname = usePathname()
+  const isEnglish = pathname.startsWith('/en')
 
   if (!isLoaded) return null
 
@@ -11,7 +14,7 @@ export function AgeToggle() {
     <div
       className="flex items-center gap-1 bg-stone-100 rounded-full p-0.5"
       role="group"
-      aria-label="Wybierz grupę wiekową"
+      aria-label={isEnglish ? 'Select age group' : 'Wybierz grupę wiekową'}
     >
       <button
         onClick={() => setAgeMode('under13')}
@@ -23,7 +26,7 @@ export function AgeToggle() {
         ].join(' ')}
         aria-pressed={ageMode === 'under13'}
       >
-        do 13 lat
+        {isEnglish ? 'under 13' : 'do 13 lat'}
       </button>
       <button
         onClick={() => setAgeMode('13plus')}
@@ -35,7 +38,7 @@ export function AgeToggle() {
         ].join(' ')}
         aria-pressed={ageMode === '13plus'}
       >
-        13+ lat
+        13+
       </button>
     </div>
   )

@@ -1,9 +1,16 @@
+'use client'
+
+import { usePathname } from 'next/navigation'
+
 export function BezReklamBadge() {
+  const pathname = usePathname()
+  const isEnglish = pathname.startsWith('/en')
+
   return (
     <span
       className="inline-flex items-center gap-1 px-3 py-1 rounded-full
                  bg-green-50 text-green-800 text-xs font-medium border border-green-200"
-      title="Wytłumacz Dziecku nie wyświetla żadnych reklam. Nigdy."
+      title={isEnglish ? 'No ads. Ever.' : 'Wytłumacz Dziecku nie wyświetla żadnych reklam. Nigdy.'}
     >
       <svg
         className="w-3 h-3"
@@ -17,7 +24,7 @@ export function BezReklamBadge() {
           clipRule="evenodd"
         />
       </svg>
-      Bez reklam
+      {isEnglish ? 'Ad-free' : 'Bez reklam'}
     </span>
   )
 }
