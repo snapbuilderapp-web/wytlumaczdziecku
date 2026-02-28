@@ -29,7 +29,7 @@ export default async function TematyPage() {
     const supabase = await createClient()
     const { data } = await supabase
       .from('infographics')
-      .select('id, slug, title_pl, category_id, age_group, hero_image_url, like_count, view_count, reading_level, emotional_weight, ai_draft, expert_reviewed')
+      .select('id, slug, title_pl, category_id, age_group, hero_image_url, hero_image_url_en, like_count, view_count, reading_level, emotional_weight, ai_draft, expert_reviewed')
       .eq('status', 'published')
       .order('published_at', { ascending: false })
       .limit(200)

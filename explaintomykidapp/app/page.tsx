@@ -31,13 +31,13 @@ async function getHomepageData() {
     const [popular, recent] = await Promise.all([
       supabase
         .from('infographics')
-        .select('id, slug, title_pl, category_id, age_group, hero_image_url, like_count, view_count, reading_level, emotional_weight, ai_draft, expert_reviewed')
+        .select('id, slug, title_pl, category_id, age_group, hero_image_url, hero_image_url_en, like_count, view_count, reading_level, emotional_weight, ai_draft, expert_reviewed')
         .eq('status', 'published')
         .order('like_count', { ascending: false })
         .limit(4),
       supabase
         .from('infographics')
-        .select('id, slug, title_pl, category_id, age_group, hero_image_url, like_count, view_count, reading_level, emotional_weight, ai_draft, expert_reviewed')
+        .select('id, slug, title_pl, category_id, age_group, hero_image_url, hero_image_url_en, like_count, view_count, reading_level, emotional_weight, ai_draft, expert_reviewed')
         .eq('status', 'published')
         .order('published_at', { ascending: false })
         .limit(4),

@@ -112,6 +112,7 @@ export interface InfographicCard {
   category_id: CategoryId
   age_group: AgeGroup
   hero_image_url: string | null
+  hero_image_url_en: string | null
   like_count: number
   view_count: number
   reading_level: ReadingLevel

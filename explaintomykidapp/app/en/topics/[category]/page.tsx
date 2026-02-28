@@ -49,7 +49,7 @@ export default async function EnglishCategoryPage({ params }: { params: Promise<
   const supabase = getSupabase()
   const { data } = await supabase
     .from('infographics')
-    .select('id, slug, slug_en, title_pl, title_en, category_id, hero_image_url, like_count, view_count, reading_level, emotional_weight, ai_draft, expert_reviewed, age_group')
+    .select('id, slug, slug_en, title_pl, title_en, category_id, hero_image_url, hero_image_url_en, like_count, view_count, reading_level, emotional_weight, ai_draft, expert_reviewed, age_group')
     .eq('status', 'published')
     .eq('category_id', category as CategoryId)
     .not('slug_en', 'is', null)

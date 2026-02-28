@@ -30,6 +30,7 @@ export function InfographicCard({ infographic, priority = false, lang = 'pl' }: 
     category_id,
     age_group,
     hero_image_url,
+    hero_image_url_en,
     like_count,
     view_count,
     ai_draft,
@@ -42,10 +43,9 @@ export function InfographicCard({ infographic, priority = false, lang = 'pl' }: 
 
   const accentColor = CATEGORY_COLORS[category_id] ?? 'bg-stone-400'
 
-  // hero_image_url is stored as an absolute OG URL or Supabase storage URL.
-  // next/image cannot optimize its own API routes, so only optimize genuine Supabase storage images.
-  const imageSrc = hero_image_url
-    ?? `/api/og/${slug}?c=${category_id}&t=${encodeURIComponent(title_pl)}`
+  // Use English image on EN routes, fall back to PL image, then OG fallback
+  const heroUrl = isEnglish ? (hero_image_url_en ?? hero_image_url) : hero_image_url
+  const imageSrc = heroUrl ?? `/api/og/${slug}?c=${category_id}&t=${encodeURIComponent(title_pl)}`
   const isSupabaseImage = imageSrc.includes('.supabase.co/storage/')
   const shouldOptimize = isSupabaseImage
 
