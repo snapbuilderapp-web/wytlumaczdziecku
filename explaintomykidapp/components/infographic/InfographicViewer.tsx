@@ -84,7 +84,7 @@ export function InfographicViewer({
       {/* AI draft notice */}
       {aiDraft && !expertReviewed && (
         <div className="pt-3">
-          <AiDraftWatermark />
+          <AiDraftWatermark lang={lang} />
         </div>
       )}
 

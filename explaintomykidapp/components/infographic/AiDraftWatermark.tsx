@@ -3,13 +3,20 @@
  * Required by EU AI Act for AI-generated educational content before human review.
  * Display on all infographics where ai_draft = true AND expert_reviewed = false.
  */
-export function AiDraftWatermark() {
+export function AiDraftWatermark({ lang = 'pl' }: { lang?: 'pl' | 'en' }) {
+  const label = lang === 'en'
+    ? 'AI-generated content, pending human review'
+    : 'Treść wygenerowana przez AI, oczekuje na weryfikację człowieka'
+  const text = lang === 'en'
+    ? 'AI Draft — pending expert review'
+    : 'Wersja robocza AI — oczekuje na weryfikację eksperta'
+
   return (
     <div
       className="flex items-center gap-2 px-4 py-2 mx-4 mb-2
                  bg-amber-50 border border-amber-200 rounded-lg text-amber-800 text-xs"
       role="note"
-      aria-label="Treść wygenerowana przez AI, oczekuje na weryfikację człowieka"
+      aria-label={label}
     >
       <svg className="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
         <path
@@ -18,7 +25,7 @@ export function AiDraftWatermark() {
           clipRule="evenodd"
         />
       </svg>
-      <span>Wersja robocza AI — oczekuje na weryfikację eksperta</span>
+      <span>{text}</span>
     </div>
   )
 }
