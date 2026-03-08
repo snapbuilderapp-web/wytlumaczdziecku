@@ -4,6 +4,7 @@ import { Header } from '@/components/layout/Header'
 import { BottomTabBar } from '@/components/layout/BottomTabBar'
 import { PageWrapper } from '@/components/layout/PageWrapper'
 import { useAgeMode } from '@/hooks/useAgeMode'
+import Link from 'next/link'
 import { useDyslexiaMode } from '@/hooks/useDyslexiaMode'
 
 export default function UstawieniaPage() {
@@ -83,12 +84,12 @@ export default function UstawieniaPage() {
 
         {/* Links */}
         <div className="space-y-2 text-sm">
-          <a href="/dla-rodzicow" className="block text-[var(--brand-primary)] hover:underline">
+          <Link href="/dla-rodzicow" className="block text-[var(--brand-primary)] hover:underline">
             Dla rodziców →
-          </a>
-          <a href="/polityka-prywatnosci" className="block text-[var(--brand-primary)] hover:underline">
+          </Link>
+          <Link href="/polityka-prywatnosci" className="block text-[var(--brand-primary)] hover:underline">
             Polityka prywatności →
-          </a>
+          </Link>
         </div>
       </PageWrapper>
       <BottomTabBar />

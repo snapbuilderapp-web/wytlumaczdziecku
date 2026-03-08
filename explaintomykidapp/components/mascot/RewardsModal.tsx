@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+
 import { useGamification } from '@/hooks/useGamification'
 import { Rys } from '@/components/mascot/Rys'
 

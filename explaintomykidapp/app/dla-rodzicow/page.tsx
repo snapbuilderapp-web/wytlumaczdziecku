@@ -36,7 +36,7 @@ export default function DlaRodzicowPage() {
           <p>
             Treści są generowane przez sztuczną inteligencję (Google Gemini), a następnie
             weryfikowane przez człowieka przed publikacją. Wszystkie niesprawdzone treści są
-            oznaczone jako „Wersja robocza AI". Treści zweryfikowane przez eksperta są oznaczone
+            oznaczone jako &quot;Wersja robocza AI&quot;. Treści zweryfikowane przez eksperta są oznaczone
             osobną odznaką.
           </p>
 

@@ -9,15 +9,15 @@ interface InfographicSectionProps {
 }
 
 const SECTION_ACCENTS: Record<string, string> = {
-  hero:    'bg-[var(--brand-primary)]',
-  why:     'bg-amber-400',
-  how:     'bg-brand-teal',
+  hero: 'bg-[var(--brand-primary)]',
+  why: 'bg-amber-400',
+  how: 'bg-brand-teal',
   example: 'bg-amber-200',
-  facts:   'bg-[var(--brand-coral)]',
-  quiz_cta:'bg-[var(--brand-primary)]',
+  facts: 'bg-[var(--brand-coral)]',
+  quiz_cta: 'bg-[var(--brand-primary)]',
 }
 
-export function InfographicSection({ section, ageMode, isFirst, isLast }: InfographicSectionProps) {
+export function InfographicSection({ section, ageMode, isFirst }: InfographicSectionProps) {
   const isHero = section.type === 'hero'
   const isFacts = section.type === 'facts'
   const isExample = section.type === 'example'

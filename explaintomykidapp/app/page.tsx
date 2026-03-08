@@ -1,4 +1,3 @@
-import { Suspense } from 'react'
 import { Header } from '@/components/layout/Header'
 import { BottomTabBar } from '@/components/layout/BottomTabBar'
 import { PageWrapper } from '@/components/layout/PageWrapper'
@@ -13,15 +12,15 @@ import type { Category, InfographicCard } from '@/types'
 export const revalidate = 3600 // 1 hour ISR
 
 const CATEGORIES: Category[] = [
-  { id: 'science',    name_pl: 'Nauka',         name_en: 'Science',    color_hex: '#0D9488', icon_emoji: '🔬', description_pl: null, display_order: 1 },
-  { id: 'history',    name_pl: 'Historia',      name_en: 'History',    color_hex: '#B45309', icon_emoji: '🏛️', description_pl: null, display_order: 2 },
-  { id: 'tech',       name_pl: 'Technologia',   name_en: 'Technology', color_hex: '#2563EB', icon_emoji: '📱', description_pl: null, display_order: 3 },
-  { id: 'nature',     name_pl: 'Przyroda',      name_en: 'Nature',     color_hex: '#16A34A', icon_emoji: '🌿', description_pl: null, display_order: 4 },
-  { id: 'body',       name_pl: 'Ciało i zdrowie', name_en: 'Body',     color_hex: '#E11D48', icon_emoji: '🫀', description_pl: null, display_order: 5 },
-  { id: 'space',      name_pl: 'Kosmos',        name_en: 'Space',      color_hex: '#1E40AF', icon_emoji: '🔭', description_pl: null, display_order: 7 },
-  { id: 'society',    name_pl: 'Społeczeństwo', name_en: 'Society',    color_hex: '#7C3AED', icon_emoji: '🏘️', description_pl: null, display_order: 6 },
-  { id: 'emotions',   name_pl: 'Emocje',        name_en: 'Emotions',   color_hex: '#DB2777', icon_emoji: '💭', description_pl: null, display_order: 8 },
-  { id: 'philosophy', name_pl: 'Filozofia',     name_en: 'Philosophy', color_hex: '#D97706', icon_emoji: '💡', description_pl: null, display_order: 9 },
+  { id: 'science', name_pl: 'Nauka', name_en: 'Science', color_hex: '#0D9488', icon_emoji: '🔬', description_pl: null, display_order: 1 },
+  { id: 'history', name_pl: 'Historia', name_en: 'History', color_hex: '#B45309', icon_emoji: '🏛️', description_pl: null, display_order: 2 },
+  { id: 'tech', name_pl: 'Technologia', name_en: 'Technology', color_hex: '#2563EB', icon_emoji: '📱', description_pl: null, display_order: 3 },
+  { id: 'nature', name_pl: 'Przyroda', name_en: 'Nature', color_hex: '#16A34A', icon_emoji: '🌿', description_pl: null, display_order: 4 },
+  { id: 'body', name_pl: 'Ciało i zdrowie', name_en: 'Body', color_hex: '#E11D48', icon_emoji: '🫀', description_pl: null, display_order: 5 },
+  { id: 'space', name_pl: 'Kosmos', name_en: 'Space', color_hex: '#1E40AF', icon_emoji: '🔭', description_pl: null, display_order: 7 },
+  { id: 'society', name_pl: 'Społeczeństwo', name_en: 'Society', color_hex: '#7C3AED', icon_emoji: '🏘️', description_pl: null, display_order: 6 },
+  { id: 'emotions', name_pl: 'Emocje', name_en: 'Emotions', color_hex: '#DB2777', icon_emoji: '💭', description_pl: null, display_order: 8 },
+  { id: 'philosophy', name_pl: 'Filozofia', name_en: 'Philosophy', color_hex: '#D97706', icon_emoji: '💡', description_pl: null, display_order: 9 },
 ]
 
 async function getHomepageData() {
@@ -45,7 +44,7 @@ async function getHomepageData() {
 
     return {
       popular: (popular.data ?? []) as InfographicCard[],
-      recent:  (recent.data  ?? []) as InfographicCard[],
+      recent: (recent.data ?? []) as InfographicCard[],
     }
   } catch {
     return { popular: [], recent: [] }

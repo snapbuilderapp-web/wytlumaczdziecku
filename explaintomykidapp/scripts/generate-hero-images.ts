@@ -71,7 +71,7 @@ function buildPrompt(title: string, ageGroup: string, lang: 'pl' | 'en'): string
 async function generateImage(prompt: string): Promise<Buffer> {
   const result = await imageModel.generateContent({
     contents: [{ role: 'user', parts: [{ text: prompt }] }],
-    // @ts-ignore — responseModalities not yet in type defs for this model
+    // @ts-expect-error — responseModalities not yet in type defs for this model
     generationConfig: { responseModalities: ['IMAGE'] },
   })
 

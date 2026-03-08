@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 
 export function useScrollProgress(containerRef?: React.RefObject<HTMLElement | null>) {
   const [progress, setProgress] = useState(0)
