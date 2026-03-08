@@ -134,11 +134,14 @@ async function generate(topic: string, ageGroup: 'under13' | '13plus') {
 async function main() {
   const topic = process.argv[2]
   if (!topic) {
-    console.error('Usage: npx tsx scripts/generate-infographic.ts "Temat infografiki"')
+    console.error('Usage: npx tsx scripts/generate-infographic.ts "Temat infografiki" [--teen]')
     process.exit(1)
   }
 
-  console.log(`\n📝 Generating: "${topic}"`)
+  const isTeenOnly = process.argv.includes('--teen')
+  const ageGroupFlag = isTeenOnly ? '13plus' : 'both'
+
+  console.log(`\n📝 Generating: "${topic}" [age_group: ${ageGroupFlag}]`)
 
   const [under13, teen] = await Promise.all([
     generate(topic, 'under13'),
@@ -166,7 +169,7 @@ async function main() {
       slug,
       title_pl:         under13.title,
       category_id:      under13.suggested_category ?? 'science',
-      age_group:        'both',
+      age_group:        ageGroupFlag,
       content_under13:  under13,
       content_13plus:   teen,
       status:           'draft',

@@ -6,9 +6,14 @@ import { BezReklamBadge } from '@/components/trust/BezReklamBadge'
 import { AgeToggle } from '@/components/age/AgeToggle'
 import { LangToggle } from '@/components/layout/LangToggle'
 import { HeaderLogo } from '@/components/layout/HeaderLogo'
+import { RewardsModal } from '@/components/mascot/RewardsModal'
+import { useGamification } from '@/hooks/useGamification'
+import { useState } from 'react'
 
 export function Header() {
   const pathname = usePathname()
+  const { points } = useGamification()
+  const [isRewardsOpen, setIsRewardsOpen] = useState(false)
 
   return (
     <header className="sticky top-0 z-40 bg-[var(--bg-base)] border-b border-stone-200">
@@ -18,6 +23,14 @@ export function Header() {
 
         {/* Right side */}
         <div className="flex items-center gap-2">
+          {/* Gamification Points Indicator */}
+          <button
+            onClick={() => setIsRewardsOpen(true)}
+            className="flex items-center gap-1.5 bg-amber-100 hover:bg-amber-200 text-amber-900 px-3 py-1.5 rounded-full font-bold text-sm transition-colors border border-amber-200 shadow-sm"
+          >
+            <span className="text-base">⭐</span> {points} <span className="hidden sm:inline">PKT</span>
+          </button>
+
           <BezReklamBadge />
           <LangToggle />
           <AgeToggle />
@@ -30,6 +43,12 @@ export function Header() {
           </Link>
         </div>
       </div>
+
+      {/* Rewards Modal */}
+      <RewardsModal
+        isOpen={isRewardsOpen}
+        onClose={() => setIsRewardsOpen(false)}
+      />
     </header>
   )
 }

@@ -131,8 +131,11 @@ export interface QuizQuestion {
   infographic_id: string
   age_group: AgeGroup
   question_pl: string
+  question_en?: string | null
   options: QuizOption[]
+  options_en?: QuizOption[] | null
   explanation_pl: string
+  explanation_en?: string | null
   display_order: number
 }
 

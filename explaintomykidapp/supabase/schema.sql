@@ -111,8 +111,11 @@ CREATE TABLE IF NOT EXISTS quiz_questions (
   infographic_id UUID NOT NULL REFERENCES infographics(id) ON DELETE CASCADE,
   age_group      age_group NOT NULL,
   question_pl    TEXT NOT NULL,
+  question_en    TEXT,
   options        JSONB NOT NULL,   -- [{text: string, correct: boolean}]
+  options_en     JSONB,            -- [{text: string, correct: boolean}]
   explanation_pl TEXT NOT NULL,
+  explanation_en TEXT,
   display_order  INTEGER NOT NULL DEFAULT 0,
   created_at     TIMESTAMPTZ NOT NULL DEFAULT now()
 );

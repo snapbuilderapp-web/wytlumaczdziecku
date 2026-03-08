@@ -11,6 +11,7 @@ import { ConversationStarters } from './ConversationStarters'
 import { AiDraftWatermark } from './AiDraftWatermark'
 import { HeroImagePanel } from './HeroImagePanel'
 import { Rys } from '@/components/mascot/Rys'
+import { QuizFlow } from '@/components/quiz/QuizFlow'
 import type { InfographicContent } from '@/types'
 
 interface InfographicViewerProps {
@@ -103,6 +104,13 @@ export function InfographicViewer({
       {/* Parent conversation starters */}
       <ScrollReveal>
         <ConversationStarters starters={content.conversation_starters} />
+      </ScrollReveal>
+
+      {/* Quiz Section */}
+      <ScrollReveal>
+        <div className="px-4 pb-4">
+          <QuizFlow infographicId={infographicId} ageGroup={ageMode} lang={lang} />
+        </div>
       </ScrollReveal>
 
       {/* Footer: like + share */}
